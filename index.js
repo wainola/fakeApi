@@ -3,6 +3,7 @@ const express = require('express');
 const DATABASE = require('./db');
 const cors = require('cors');
 const config = require('./config')
+const dotenv = require('dotenv').config();
 
 const app = express();
 const DBMYSQL = new DATABASE({
@@ -11,12 +12,12 @@ const DBMYSQL = new DATABASE({
     password: config.password,
     database: 'employees',
 });
-const port = 4777;
+const { PORT: port } = process.env;
 
 app.use(cors())
 
 app.get('/employees', (req, res, next) => {
-    DBMYSQL.query('SELECT * FROM EMPLOYEES LIMIT 500')
+    DBMYSQL.query('SELECT * FROM EMPLOYEES WHERE emp_no = FLOOR(RAND() * (10001 - 11000) + 11000)')
     .then(resultado => {
         res.json({data: resultado});
     });
@@ -38,5 +39,5 @@ app.get('/emps_depts', (req, res, next) => {
 });
 
 app.listen(port, () => {
-    console.log('Servidor escuchando en el 4777');
+    console.log(`Server listening on port ${port}`);
 });
